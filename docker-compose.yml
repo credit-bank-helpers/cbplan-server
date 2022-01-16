@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  database:
+    image: mysql:8.0.27
+    cap_add:
+      - SYS_NICE
+    container_name: cbplandb
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=cbplan
+      - TZ=UTC
+    volumes:
+      - ./src/main/resources/db/migration/V1__init.sql:/docker-entrypoint-initdb.d/V1__init.sql
+      - cbplandb:/var/lib/mysql
+    command: [ 'mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--max_allowed_packet=1073741824', '--default-authentication-plugin=mysql_native_password' ]
+
+volumes:
+  cbplandb:
